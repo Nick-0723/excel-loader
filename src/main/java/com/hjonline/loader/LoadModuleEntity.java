@@ -1,18 +1,35 @@
 package com.hjonline.loader;
 
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 
 public class LoadModuleEntity {
+    private static String excelPath = "";
+    private static String javaBeanPath = "";
+
     public static void main(String[] args) throws Exception {
+        int index = 0;
+        if (args.length != 3) {
+            System.out.println("请正确输入参数，第一个是excel路径，第二个是生成javabean路径，第三个是excel中第几个sheet");
+            return;
+        } else {
+            excelPath = args[0].replace("\\", "\\\\");
+            javaBeanPath = args[1].replace("\\", "\\\\");
+            index = Integer.parseInt(args[2]);
+        }
+
+        LoadModule loadModule = new LoadModule();
+        LinkedHashMap<String, LinkedList<String>> tables = loadModule.load(excelPath, index);
+
+        tables.forEach(LoadModuleEntity::buildClassFiles);
+    }
+
+    private static void buildClassFiles(String tableName, LinkedList<String> fields) {
+        StringBuffer text = new StringBuffer();
+
         String classPrefix = "package com.hejin.etl.hbase.newentity;\n" +
                 "\n" +
                 "\n" +
@@ -30,51 +47,21 @@ public class LoadModuleEntity {
                 "@Slf4j\n" +
                 "@HbaseTable(tableName = \"ecifdb:${Table}\")\n" +
                 "public class ${Table}Entity implements Serializable {\n";
-        StringBuffer text = new StringBuffer();
-        FileInputStream is = new FileInputStream("D:\\xinye\\ecif-docs\\03详细设计\\二期设计文档\\兴业证券主干表设计文档V1.2.xlsx");
-        XSSFWorkbook wb = new XSSFWorkbook(is);
-        XSSFSheet sheet0 = wb.getSheetAt(1);
-        System.out.println(sheet0.getSheetName());
-        XSSFCell previousTableName = null;
-        String tableName = "";
-        for (Row aSheet1 : sheet0){
-            XSSFRow row = (XSSFRow) aSheet1;
-            XSSFCell cell1 = row.getCell(1);
-            if (previousTableName!=null&&(cell1==null||cell1.getStringCellValue().equals(""))){
-                text.append("}");
-                buildClassFiles(tableName,text);
-            }
-            if (cell1 == null || cell1.getStringCellValue().equals("TABLE_NAME")){
-                previousTableName = null;
-                continue;
-            }
-            if (row.getCell(1).getCellStyle().getFont().getStrikeout()){
-                continue;
-            }
-            if (previousTableName == null || previousTableName.getStringCellValue().equals("")||!previousTableName.getStringCellValue().equals(tableName)) {
-                tableName = cell1.getStringCellValue();
-                text = new StringBuffer();
-                text.append(classPrefix.replace("${Table}",tableName));
-            }
-            previousTableName = cell1;
-            XSSFCell cell4 = row.getCell(4);
-            if (cell4==null||cell4.getStringCellValue().equals("")){
-                continue;
-            }
-            String fieldName = cell4.getStringCellValue();
+        text.append(classPrefix.replace("${Table}", tableName));
+        fields.forEach(fieldName -> {
             String attrName = up(fieldName);
             text.append("    @HbaseColumn(qualifier = \"").append(fieldName).append("\", type = EnumStoreType.EST_STRING)\n");
             text.append("    private String ").append(attrName).append(";\n\n");
+        });
+        fields.forEach(fieldName -> {
+            String attrName = up(fieldName);
             text.append("    public String get").append(firstCharUpperCase(attrName)).append("() {\n");
             text.append("        return ").append(attrName).append(";\n    }\n\n");
             text.append("    public void set").append(firstCharUpperCase(attrName)).append("(String ").append(attrName).append(") {\n");
             text.append("        this.").append(attrName).append(" = ").append(attrName).append(";\n    }\n\n");
-        }
-    }
-
-    private static void buildClassFiles(String tableName, StringBuffer text) {
-        String path = "D:\\xinye\\ecif-task-frame\\ecif-task-datasource\\src\\main\\java\\com\\hejin\\etl\\hbase\\newentity";
-        try (OutputStream out = new FileOutputStream(path+"\\"+tableName+"Entity.java")) {
+        });
+        text.append("}");
+        try (OutputStream out = new FileOutputStream(javaBeanPath + "\\" + tableName + "Entity.java")) {
             out.write(text.toString().getBytes());
             out.flush();
         } catch (IOException e) {
@@ -96,12 +83,11 @@ public class LoadModuleEntity {
         return str;
     }
 
-    private static String firstCharUpperCase(String str){
+    private static String firstCharUpperCase(String str) {
         char[] chars = str.toCharArray();
         chars[0] = Character.toUpperCase(chars[0]);
         return new String(chars);
     }
-
 
 
 }
