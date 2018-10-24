@@ -26,19 +26,19 @@ public class LoadModuleSql {
 
         StringBuffer sql = new StringBuffer();
         tables.forEach((k,v) -> {
-            System.out.println("table===="+k);
             sql.append("drop table if exists ecifdb.").append(k).append(";\n");
             sql.append("create external table ecifdb.").append(k).append("(\n");
             v.forEach(f -> {
                 sql.append(f).append(" ").append("string").append(",\n");
-                System.out.print(f+"==");
             });
             sql.deleteCharAt(sql.length()-2);
             sql.append(")\n");
             sql.append("stored by 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'\n");
             sql.append("WITH SERDEPROPERTIES (\"hbase.columns.mapping\" = \":key,\n");
             v.forEach(f->{
-                sql.append("f:").append(f).append(",\n");
+                if (!f.equals("pbkid")){
+                    sql.append("f:").append(f).append(",\n");
+                }
             });
             sql.deleteCharAt(sql.length()-2);
             sql.append("\")\n");

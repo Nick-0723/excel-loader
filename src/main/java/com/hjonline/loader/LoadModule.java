@@ -17,6 +17,18 @@ import java.util.LinkedList;
  */
 public class LoadModule {
 
+    public static void main(String[] args) {
+        LoadModule loadModule = new LoadModule();
+        LinkedHashMap<String, LinkedList<String>> load = loadModule.load("D:\\xinye\\ecif-docs\\03详细设计\\二期设计文档\\兴业证券主干表设计文档V1.3.xlsx", 0);
+        load.keySet().forEach(t->{
+            System.out.println("truncate 'ecifdb:"+t+"'\n");
+        });
+        LinkedHashMap<String, LinkedList<String>> load1 = loadModule.load("D:\\xinye\\ecif-docs\\03详细设计\\二期设计文档\\兴业证券主干表设计文档V1.3.xlsx", 1);
+        load1.keySet().forEach(t->{
+            System.out.println("truncate 'ecifdb:"+t+"'\n");
+        });
+    }
+
 
     public LinkedHashMap<String, LinkedList<String>> load(String inputFile, int index){
         XSSFWorkbook wb;
