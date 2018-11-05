@@ -36,6 +36,7 @@ public class LoadModuleEntity {
                 "import com.hejin.etl.hbase.annotation.EnumStoreType;\n" +
                 "import com.hejin.etl.hbase.annotation.HbaseColumn;\n" +
                 "import com.hejin.etl.hbase.annotation.HbaseTable;\n" +
+                "import com.fasterxml.jackson.annotation.JsonInclude;\n" +
                 "import lombok.Data;\n" +
                 "import lombok.extern.slf4j.Slf4j;\n" +
                 "\n" +
@@ -45,21 +46,24 @@ public class LoadModuleEntity {
                 "\n" +
                 "@Data\n" +
                 "@Slf4j\n" +
+                "@JsonInclude(JsonInclude.Include.NON_NULL)\n" +
                 "@HbaseTable(tableName = \"ecifdb:${Table}\")\n" +
                 "public class ${Table}Entity implements Serializable {\n";
         text.append(classPrefix.replace("${Table}", tableName));
         fields.forEach(fieldName -> {
+            fieldName=fieldName.equals("pbkid")?"rowkey":fieldName;
             String attrName = up(fieldName);
+
             text.append("    @HbaseColumn(qualifier = \"").append(fieldName).append("\", type = EnumStoreType.EST_STRING)\n");
             text.append("    private String ").append(attrName).append(";\n\n");
         });
-        fields.forEach(fieldName -> {
-            String attrName = up(fieldName);
-            text.append("    public String get").append(firstCharUpperCase(attrName)).append("() {\n");
-            text.append("        return ").append(attrName).append(";\n    }\n\n");
-            text.append("    public void set").append(firstCharUpperCase(attrName)).append("(String ").append(attrName).append(") {\n");
-            text.append("        this.").append(attrName).append(" = ").append(attrName).append(";\n    }\n\n");
-        });
+//        fields.forEach(fieldName -> {
+//            String attrName = up(fieldName);
+//            text.append("    public String get").append(firstCharUpperCase(attrName)).append("() {\n");
+//            text.append("        return ").append(attrName).append(";\n    }\n\n");
+//            text.append("    public void set").append(firstCharUpperCase(attrName)).append("(String ").append(attrName).append(") {\n");
+//            text.append("        this.").append(attrName).append(" = ").append(attrName).append(";\n    }\n\n");
+//        });
         text.append("}");
         try (OutputStream out = new FileOutputStream(javaBeanPath + "\\" + tableName + "Entity.java")) {
             out.write(text.toString().getBytes());
