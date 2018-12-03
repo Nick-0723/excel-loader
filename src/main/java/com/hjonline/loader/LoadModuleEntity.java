@@ -22,12 +22,12 @@ public class LoadModuleEntity {
         }
 
         LoadModule loadModule = new LoadModule();
-        LinkedHashMap<String, LinkedList<String>> tables = loadModule.load(excelPath, index);
+        LinkedHashMap<String, LinkedList<Field>> tables = loadModule.load(excelPath, index);
 
         tables.forEach(LoadModuleEntity::buildClassFiles);
     }
 
-    private static void buildClassFiles(String tableName, LinkedList<String> fields) {
+    private static void buildClassFiles(String tableName, LinkedList<Field> fields) {
         StringBuffer text = new StringBuffer();
 
         String classPrefix = "package com.hejin.etl.hbase.newentity;\n" +
@@ -50,11 +50,10 @@ public class LoadModuleEntity {
                 "@HbaseTable(tableName = \"ecifdb:${Table}\")\n" +
                 "public class ${Table}Entity implements Serializable {\n";
         text.append(classPrefix.replace("${Table}", tableName));
-        fields.forEach(fieldName -> {
-            fieldName=fieldName.equals("pbkid")?"rowkey":fieldName;
-            String attrName = up(fieldName);
+        fields.forEach(field -> {
+            String attrName = up(field.getFieldName().equals("pbkid")?"rowkey":field.getFieldName());
 
-            text.append("    @HbaseColumn(qualifier = \"").append(fieldName).append("\", type = EnumStoreType.EST_STRING)\n");
+            text.append("    @HbaseColumn(qualifier = \"").append(field.getFieldName()).append("\", type = EnumStoreType.EST_STRING)\n");
             text.append("    private String ").append(attrName).append(";\n\n");
         });
 //        fields.forEach(fieldName -> {

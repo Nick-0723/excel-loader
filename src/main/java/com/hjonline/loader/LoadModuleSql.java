@@ -8,6 +8,7 @@ import java.util.LinkedList;
 
 public class LoadModuleSql {
     public static void main(String[] args) throws Exception {
+        args = new String[]{"D:\\xinye\\svndoc\\4_项目实施\\2、详细设计\\2、二阶段设计文档\\兴业证券主干表设计文档V1.8.xlsx","D:\\xinye\\excel-loader\\ext.sql","1"};
         String excelPath = "";
         String sqlFilePath = "";
         int index = 0;
@@ -21,33 +22,38 @@ public class LoadModuleSql {
         }
 
         LoadModule loadModule = new LoadModule();
-        LinkedHashMap<String, LinkedList<String>> tables = loadModule.load(excelPath, index);
+        LinkedHashMap<String, LinkedList<Field>> tables = loadModule.load(excelPath, index);
 
 
         StringBuffer sql = new StringBuffer();
+        createExtSql(tables,sql);
+        System.out.println(sql);
+        System.out.println(sql);
+//        saveAsSqlFile(sqlFilePath,sql);
+    }
+
+    private static void createExtSql(LinkedHashMap<String, LinkedList<Field>> tables, StringBuffer sql){
+        String database = "eciftest";
         tables.forEach((k,v) -> {
-            sql.append("drop table if exists ecifdb.").append(k).append(";\n");
-            sql.append("create external table ecifdb.").append(k).append("(\n");
+            sql.append("drop table if exists ").append(database).append(".").append(k).append(";\n");
+            sql.append("create external table ").append(database).append(".").append(k).append("(\n");
             v.forEach(f -> {
-                sql.append(f).append(" ").append("string").append(",\n");
+                sql.append(f.getFieldName()).append(" ").append(f.getFieldType()).append(",\n");
             });
             sql.deleteCharAt(sql.length()-2);
             sql.append(")\n");
             sql.append("stored by 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'\n");
             sql.append("WITH SERDEPROPERTIES (\"hbase.columns.mapping\" = \":key,\n");
+            sql.append("f:").append("rowKeyValue").append(",\n");
             v.forEach(f->{
-                if (!f.equals("pbkid")){
-                    sql.append("f:").append(f).append(",\n");
+                if (!(f.getFieldName().equals("pbkid")||f.getFieldName().equals("bkid"))){
+                    sql.append("f:").append(f.getFieldName()).append(",\n");
                 }
             });
             sql.deleteCharAt(sql.length()-2);
             sql.append("\")\n");
-            sql.append("TBLPROPERTIES(\"hbase.table.name\"=\"").append("ecifdb:").append(k).append("\");\n\n\n");
-
+            sql.append("TBLPROPERTIES(\"hbase.table.name\"=\"").append(database).append(":").append(k).append("\");\n\n\n");
         });
-
-
-        saveAsSqlFile(sqlFilePath,sql);
     }
 
     private static void saveAsSqlFile(String file, StringBuffer sql){
