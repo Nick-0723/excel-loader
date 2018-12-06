@@ -8,7 +8,8 @@ import java.util.LinkedList;
 
 public class LoadModuleSql {
     public static void main(String[] args) throws Exception {
-        args = new String[]{"D:\\xinye\\svndoc\\4_项目实施\\2、详细设计\\2、二阶段设计文档\\兴业证券主干表设计文档V1.8.xlsx","D:\\xinye\\excel-loader\\ext.sql","0"};
+        args = new String[]{"D:\\微信文件\\WeChat Files\\Charles-song-323\\Files\\兴业证券主干表设计文档修改版V1.0.xlsx",
+                "D:\\xinye\\ecif-task-frame\\ecif-task-datasource\\src\\main\\java\\com\\hejin\\etl\\hbase\\entity","1"};
         String excelPath = "";
         String sqlFilePath = "";
         int index = 0;
@@ -28,7 +29,6 @@ public class LoadModuleSql {
         StringBuffer sql = new StringBuffer();
         createExtSql(tables,sql);
         System.out.println(sql);
-        System.out.println(sql);
 //        saveAsSqlFile(sqlFilePath,sql);
     }
 
@@ -46,7 +46,7 @@ public class LoadModuleSql {
             sql.append("WITH SERDEPROPERTIES (\"hbase.columns.mapping\" = \":key,\n");
             sql.append("f:").append("rowKeyValue").append(",\n");
             v.forEach(f->{
-                if (!(f.getFieldName().equals("pbkid")||f.getFieldName().equals("bkid"))){
+                if (!(f.getFieldName().equals("pbk_id")||f.getFieldName().equals("bk_id"))){
                     sql.append("f:").append(f.getFieldName()).append(",\n");
                 }
             });
