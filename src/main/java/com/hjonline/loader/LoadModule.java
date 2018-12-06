@@ -46,8 +46,8 @@ public class LoadModule {
             for (Row aSheet1 : sheet0) {
                 XSSFRow row = (XSSFRow) aSheet1;
                 XSSFCell cell1 = row.getCell(1);
-                XSSFCell cell4 = row.getCell(4);
-                XSSFCell cell5 = row.getCell(5);
+                XSSFCell cell4 = row.getCell(6);
+                XSSFCell cell5 = row.getCell(7);
                 if (cell1 == null || row.getCell(1).getCellStyle().getFont().getStrikeout() || cell1.getStringCellValue().equals("TABLE_NAME") || cell1.getStringCellValue().equals("")) {
                     continue;
                 }

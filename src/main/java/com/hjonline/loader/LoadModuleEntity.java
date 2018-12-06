@@ -11,6 +11,7 @@ public class LoadModuleEntity {
     private static String javaBeanPath = "";
 
     public static void main(String[] args) throws Exception {
+        args = new String[]{"D:\\微信文件\\WeChat Files\\Charles-song-323\\Files\\兴业证券主干表设计文档修改版V1.0.xlsx","D:\\xinye\\ecif-task-frame\\ecif-task-datasource\\src\\main\\java\\com\\hejin\\etl\\hbase\\entity","0"};
         int index = 0;
         if (args.length != 3) {
             System.out.println("请正确输入参数，第一个是excel路径，第二个是生成javabean路径，第三个是excel中第几个sheet");
@@ -30,13 +31,14 @@ public class LoadModuleEntity {
     private static void buildClassFiles(String tableName, LinkedList<Field> fields) {
         StringBuffer text = new StringBuffer();
 
-        String classPrefix = "package com.hejin.etl.hbase.newentity;\n" +
+        String classPrefix = "package com.hejin.etl.hbase.entity;\n" +
                 "\n" +
                 "\n" +
+                "import com.fasterxml.jackson.annotation.JsonInclude;\n" +
+                "import com.hejin.etl.constants.Constants;\n" +
                 "import com.hejin.etl.hbase.annotation.EnumStoreType;\n" +
                 "import com.hejin.etl.hbase.annotation.HbaseColumn;\n" +
                 "import com.hejin.etl.hbase.annotation.HbaseTable;\n" +
-                "import com.fasterxml.jackson.annotation.JsonInclude;\n" +
                 "import lombok.Data;\n" +
                 "import lombok.extern.slf4j.Slf4j;\n" +
                 "\n" +
@@ -47,11 +49,11 @@ public class LoadModuleEntity {
                 "@Data\n" +
                 "@Slf4j\n" +
                 "@JsonInclude(JsonInclude.Include.NON_NULL)\n" +
-                "@HbaseTable(tableName = \"ecifdb:${Table}\")\n" +
+                "@HbaseTable(tableName = Constants.DB_NAMESPACE + \":${Table}\")\n" +
                 "public class ${Table}Entity implements Serializable {\n";
         text.append(classPrefix.replace("${Table}", tableName));
         fields.forEach(field -> {
-            String attrName = up(field.getFieldName().equals("pbkid")?"rowkey":field.getFieldName());
+            String attrName = field.getFieldName().equals("pbk_id")?"rowkey":field.getFieldName();
 
             text.append("    @HbaseColumn(qualifier = \"").append(field.getFieldName()).append("\", type = EnumStoreType.EST_STRING)\n");
             text.append("    private String ").append(attrName).append(";\n\n");

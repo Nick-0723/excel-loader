@@ -8,7 +8,7 @@ import java.util.LinkedList;
 
 public class LoadModuleSql {
     public static void main(String[] args) throws Exception {
-        args = new String[]{"D:\\xinye\\svndoc\\4_项目实施\\2、详细设计\\2、二阶段设计文档\\兴业证券主干表设计文档V1.8.xlsx","D:\\xinye\\excel-loader\\ext.sql","1"};
+        args = new String[]{"D:\\xinye\\svndoc\\4_项目实施\\2、详细设计\\2、二阶段设计文档\\兴业证券主干表设计文档V1.8.xlsx","D:\\xinye\\excel-loader\\ext.sql","0"};
         String excelPath = "";
         String sqlFilePath = "";
         int index = 0;
