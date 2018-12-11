@@ -33,7 +33,8 @@ public class LoadModuleSql {
     }
 
     private static void createExtSql(LinkedHashMap<String, LinkedList<Field>> tables, StringBuffer sql){
-        String database = "eciftest";
+        String database = "ecifdb";
+        String namespace = "ecifdb20181114";
         tables.forEach((k,v) -> {
             sql.append("drop table if exists ").append(database).append(".").append(k).append(";\n");
             sql.append("create external table ").append(database).append(".").append(k).append("(\n");
@@ -52,7 +53,7 @@ public class LoadModuleSql {
             });
             sql.deleteCharAt(sql.length()-2);
             sql.append("\")\n");
-            sql.append("TBLPROPERTIES(\"hbase.table.name\"=\"").append(database).append(":").append(k).append("\");\n\n\n");
+            sql.append("TBLPROPERTIES(\"hbase.table.name\"=\"").append(namespace).append(":").append(k).append("\");\n\n\n");
         });
     }
 
