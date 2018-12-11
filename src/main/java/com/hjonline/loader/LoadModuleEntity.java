@@ -11,7 +11,8 @@ public class LoadModuleEntity {
     private static String javaBeanPath = "";
 
     public static void main(String[] args) throws Exception {
-        args = new String[]{"D:\\微信文件\\WeChat Files\\Charles-song-323\\Files\\兴业证券主干表设计文档修改版V1.0.xlsx","D:\\xinye\\ecif-task-frame\\ecif-task-datasource\\src\\main\\java\\com\\hejin\\etl\\hbase\\entity","0"};
+        args = new String[]{"D:\\xinye\\svndoc\\4_项目实施\\2、详细设计\\2、二阶段设计文档\\兴业证券主干表设计文档修改版V2.0.xlsx",
+                "D:\\xinye\\ecif-task-frame\\ecif-task-datasource\\src\\main\\java\\com\\hejin\\etl\\hbase\\entity","0"};
         int index = 0;
         if (args.length != 3) {
             System.out.println("请正确输入参数，第一个是excel路径，第二个是生成javabean路径，第三个是excel中第几个sheet");

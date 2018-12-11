@@ -8,8 +8,8 @@ import java.util.LinkedList;
 
 public class LoadModuleSql {
     public static void main(String[] args) throws Exception {
-        args = new String[]{"D:\\微信文件\\WeChat Files\\Charles-song-323\\Files\\兴业证券主干表设计文档修改版V1.0.xlsx",
-                "D:\\xinye\\ecif-task-frame\\ecif-task-datasource\\src\\main\\java\\com\\hejin\\etl\\hbase\\entity","1"};
+        args = new String[]{"D:\\xinye\\svndoc\\4_项目实施\\2、详细设计\\2、二阶段设计文档\\兴业证券ECIF物理模型V1.1.xlsx",
+                "ext0.sql","0"};
         String excelPath = "";
         String sqlFilePath = "";
         int index = 0;
@@ -29,7 +29,7 @@ public class LoadModuleSql {
         StringBuffer sql = new StringBuffer();
         createExtSql(tables,sql);
         System.out.println(sql);
-//        saveAsSqlFile(sqlFilePath,sql);
+        saveAsSqlFile(sqlFilePath,sql);
     }
 
     private static void createExtSql(LinkedHashMap<String, LinkedList<Field>> tables, StringBuffer sql){
@@ -38,7 +38,7 @@ public class LoadModuleSql {
             sql.append("drop table if exists ").append(database).append(".").append(k).append(";\n");
             sql.append("create external table ").append(database).append(".").append(k).append("(\n");
             v.forEach(f -> {
-                sql.append(f.getFieldName()).append(" ").append(f.getFieldType()).append(",\n");
+                sql.append("`").append(f.getFieldName()).append("` ").append(f.getFieldType()).append(",\n");
             });
             sql.deleteCharAt(sql.length()-2);
             sql.append(")\n");
