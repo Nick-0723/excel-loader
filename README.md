@@ -1,3 +1,3 @@
 # excel-loader
 generate sql or entity Classes from excel file
-![](/src/main/resources/WeChat Screenshot_20190508145003.png)
+![](https://github.com/Nick-0723/excel-loader/blob/master/src/main/resources/WeChat%20Screenshot_20190508145003.png)
