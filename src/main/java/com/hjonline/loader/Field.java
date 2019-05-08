@@ -10,9 +10,11 @@ import lombok.Data;
 public class Field {
     private String fieldName;
     private String fieldType;
+    private String comment;
 
-    public Field(String fieldName, String fieldType) {
+    public Field(String fieldName, String fieldType, String comment) {
         this.fieldName = fieldName;
         this.fieldType = fieldType;
+        this.comment = comment;
     }
 }

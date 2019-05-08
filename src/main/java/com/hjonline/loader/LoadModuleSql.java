@@ -8,8 +8,8 @@ import java.util.LinkedList;
 
 public class LoadModuleSql {
     public static void main(String[] args) throws Exception {
-        args = new String[]{"D:\\xinye\\svndoc\\4_项目实施\\2、详细设计\\2、二阶段设计文档\\兴业证券ECIF物理模型V1.1.xlsx",
-                "ext0.sql","0"};
+        args = new String[]{"D:\\xinye\\svndoc\\4_项目实施\\2、详细设计\\2、二阶段设计文档\\兴业证券ECIF物理模型V2.3.xlsx",
+                "stock.sql","2"};
         String excelPath = "";
         String sqlFilePath = "";
         int index = 0;
@@ -33,18 +33,18 @@ public class LoadModuleSql {
     }
 
     private static void createExtSql(LinkedHashMap<String, LinkedList<Field>> tables, StringBuffer sql){
-        String database = "ecifdb";
-        String namespace = "ecifdb20181114";
+        String database = "${hiveconf:namespace}";
+        String namespace = "${hiveconf:namespace}";
         tables.forEach((k,v) -> {
             sql.append("drop table if exists ").append(database).append(".").append(k).append(";\n");
             sql.append("create external table ").append(database).append(".").append(k).append("(\n");
             v.forEach(f -> {
-                sql.append("`").append(f.getFieldName()).append("` ").append(f.getFieldType()).append(",\n");
+                sql.append("`").append(f.getFieldName()).append("` ").append(f.getFieldType()).append(" comment ").append("'").append(f.getComment()).append("',\n");
             });
             sql.deleteCharAt(sql.length()-2);
             sql.append(")\n");
             sql.append("stored by 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'\n");
-            sql.append("WITH SERDEPROPERTIES (\"hbase.columns.mapping\" = \":key,\n");
+            sql.append("WITH SERDEPROPERTIES ('hbase.columns.mapping' = ':key,\n");
             sql.append("f:").append("rowKeyValue").append(",\n");
             v.forEach(f->{
                 if (!(f.getFieldName().equals("pbk_id")||f.getFieldName().equals("bk_id"))){
@@ -52,8 +52,8 @@ public class LoadModuleSql {
                 }
             });
             sql.deleteCharAt(sql.length()-2);
-            sql.append("\")\n");
-            sql.append("TBLPROPERTIES(\"hbase.table.name\"=\"").append(namespace).append(":").append(k).append("\");\n\n\n");
+            sql.append("')\n");
+            sql.append("TBLPROPERTIES('hbase.table.name'='").append(namespace).append(":").append(k).append("');\n\n\n");
         });
     }
 

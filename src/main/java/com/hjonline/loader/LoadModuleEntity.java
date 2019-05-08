@@ -11,8 +11,8 @@ public class LoadModuleEntity {
     private static String javaBeanPath = "";
 
     public static void main(String[] args) throws Exception {
-        args = new String[]{"D:\\xinye\\svndoc\\4_项目实施\\2、详细设计\\2、二阶段设计文档\\兴业证券主干表设计文档修改版V2.0.xlsx",
-                "D:\\xinye\\ecif-task-frame\\ecif-task-datasource\\src\\main\\java\\com\\hejin\\etl\\hbase\\entity","0"};
+        args = new String[]{"D:\\xinye\\svndoc\\4_项目实施\\2、详细设计\\2、二阶段设计文档\\兴业证券ECIF物理模型V2.3.xlsx",
+                "D:\\xinye\\ecif-task-frame\\ecif-task-datasource\\src\\main\\java\\com\\hejin\\etl\\hbase\\entity","9"};
         int index = 0;
         if (args.length != 3) {
             System.out.println("请正确输入参数，第一个是excel路径，第二个是生成javabean路径，第三个是excel中第几个sheet");
@@ -36,7 +36,6 @@ public class LoadModuleEntity {
                 "\n" +
                 "\n" +
                 "import com.fasterxml.jackson.annotation.JsonInclude;\n" +
-                "import com.hejin.etl.constants.Constants;\n" +
                 "import com.hejin.etl.hbase.annotation.EnumStoreType;\n" +
                 "import com.hejin.etl.hbase.annotation.HbaseColumn;\n" +
                 "import com.hejin.etl.hbase.annotation.HbaseTable;\n" +
@@ -50,7 +49,7 @@ public class LoadModuleEntity {
                 "@Data\n" +
                 "@Slf4j\n" +
                 "@JsonInclude(JsonInclude.Include.NON_NULL)\n" +
-                "@HbaseTable(tableName = Constants.DB_NAMESPACE + \":${Table}\")\n" +
+                "@HbaseTable(tableName = \":${Table}\")\n" +
                 "public class ${Table}Entity implements Serializable {\n";
         text.append(classPrefix.replace("${Table}", tableName));
         fields.forEach(field -> {
